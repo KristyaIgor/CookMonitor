@@ -1,9 +1,11 @@
 
-package edi.md.cookmonitor.NetworkUtils;
+package edi.md.cookmonitor.NetworkUtils.ServiceResultAndBody;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import edi.md.cookmonitor.NetworkUtils.ServiceResultAndBody.OrdersList;
 
 public class ResponseOrderList {
 

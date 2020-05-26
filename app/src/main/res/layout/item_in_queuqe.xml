@@ -13,11 +13,10 @@
         android:layout_marginTop="8dp"
         android:background="#ffea00"
         android:gravity="center_vertical"
-        android:padding="4dp"
+        android:paddingStart="4dp"
         android:text="Name"
         android:textColor="@color/background_fon"
         android:textSize="26sp"
-        app:layout_constraintBottom_toTopOf="@+id/txt_no_order"
         app:layout_constraintEnd_toStartOf="@+id/textView9"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -42,13 +41,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
         android:background="#ffea00"
         android:gravity="center"
         android:text="15"
         android:textColor="@color/background_fon"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_count"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/text_assortment_name"
         app:layout_constraintTop_toBottomOf="@+id/textView9" />
@@ -58,61 +56,66 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="4dp"
         android:background="#ffea00"
         android:paddingStart="4dp"
         android:text="Номер заказа:"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/txt_no_order"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_assortment_name" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_comment_line" />
 
     <TextView
         android:id="@+id/txt_no_order"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
         android:background="#ffea00"
         android:gravity="end"
         android:paddingEnd="8dp"
         android:text="TextView"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/textView13"
         app:layout_constraintStart_toEndOf="@+id/textView11"
-        app:layout_constraintTop_toBottomOf="@+id/text_assortment_name" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_comment_line" />
 
     <TextView
         android:id="@+id/textView13"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
         android:background="#ffea00"
         android:text="Количевство:"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/txt_count"
         app:layout_constraintStart_toEndOf="@+id/txt_no_order"
-        app:layout_constraintTop_toBottomOf="@+id/text_assortment_name" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_comment_line" />
 
     <TextView
         android:id="@+id/txt_count"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
         android:background="#ffea00"
         android:gravity="end"
         android:paddingEnd="4dp"
         android:text="TextView"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/time_cook"
         app:layout_constraintStart_toEndOf="@+id/textView13"
+        app:layout_constraintTop_toBottomOf="@+id/txt_comment_line" />
+
+    <TextView
+        android:id="@+id/txt_comment_line"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="#ffea00"
+        android:paddingStart="4dp"
+        android:textColor="@color/colorAccent"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/text_assortment_name"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_assortment_name" />
 
 

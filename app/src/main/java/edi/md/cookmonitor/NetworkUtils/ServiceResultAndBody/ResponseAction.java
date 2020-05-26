@@ -1,4 +1,4 @@
-package edi.md.cookmonitor.NetworkUtils;
+package edi.md.cookmonitor.NetworkUtils.ServiceResultAndBody;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

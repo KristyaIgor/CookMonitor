@@ -12,6 +12,8 @@
     <color name="back_gray">#727272</color>
     <color name="color_white_new">#FFFFFF</color>
 
+    <color name="color_new_order">#ffd414</color>
+
     <color name="executeColor">#00e676</color>
     <color name="aftertimeColor">#FF3D00</color>
 </resources>
