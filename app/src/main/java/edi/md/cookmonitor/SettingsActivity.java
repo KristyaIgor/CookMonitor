@@ -4,52 +4,43 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-
-import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
-import java.io.IOException;
-import java.net.URL;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static edi.md.cookmonitor.NetworkUtils.UrlUtils.Ping;
-import static edi.md.cookmonitor.NetworkUtils.UrlUtils.Response_from_Ping;
-import static edi.md.cookmonitor.NetworkUtils.UrlUtils.generateURL_RegDev;
-import static edi.md.cookmonitor.NetworkUtils.UrlUtils.getResponseFromDeviceReg;
+import edi.md.cookmonitor.NetworkUtils.ApiUtils;
+import edi.md.cookmonitor.NetworkUtils.CommandServices;
+import edi.md.cookmonitor.NetworkUtils.ServiceResultAndBody.SimpleResultService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SettingsActivity extends AppCompatActivity {
     TextView txtCod,tv_device_id;
@@ -59,7 +50,9 @@ public class SettingsActivity extends AppCompatActivity {
     SharedPreferences Settings;
     Spinner spinner_update;
 
-    private String ip_adress,device_id,port;
+    private String ip_address,device_id,port;
+
+    private RadioButton rd_btnCookMonitor,rd_btnOrderMonitor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,11 +75,24 @@ public class SettingsActivity extends AppCompatActivity {
         tv_device_id = findViewById(R.id.txt_device_id);
         spinner_update = findViewById(R.id.spinner_time_update);
 
+        rd_btnCookMonitor = findViewById(R.id.btn_cook_monitor);
+        rd_btnOrderMonitor = findViewById(R.id.rd_order_monitor);
+
         Settings = getSharedPreferences("Settings", MODE_PRIVATE);
         final SharedPreferences.Editor inputSeting =Settings.edit();
 
         et_adress.setText(Settings.getString("IP",""));
         et_port.setText(Settings.getString("Port",""));
+
+        int workMethod = Settings.getInt("WorkAs",BaseEnum.NONE_SELECTED_MODE);
+
+        if(workMethod == BaseEnum.CookMonitor){
+            rd_btnCookMonitor.setChecked(true);
+        }
+        else if( workMethod == BaseEnum.OrderMonitor){
+            rd_btnOrderMonitor.setChecked(true);
+        }
+
 
         final String tmDevice, androidId;
 
@@ -137,7 +143,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         List<String> categories_spiner = new ArrayList<String>();
         categories_spiner.add("Вручную");
-        categories_spiner.add("Раз в 5 секунд");
         categories_spiner.add("Раз в 10 секунд");
         categories_spiner.add("Раз в 15 секунд");
         categories_spiner.add("Раз в 30 секунд");
@@ -159,28 +164,23 @@ public class SettingsActivity extends AppCompatActivity {
                         editor_sync.apply();
                     }break;
                     case 1:{
-                        editor_sync.putInt("period",5000);
+                        editor_sync.putInt("period",10000);
                         editor_sync.putInt("position",1);
                         editor_sync.apply();
                     }break;
                     case 2:{
-                        editor_sync.putInt("period",10000);
+                        editor_sync.putInt("period",15000);
                         editor_sync.putInt("position",2);
                         editor_sync.apply();
                     }break;
                     case 3:{
-                        editor_sync.putInt("period",15000);
+                        editor_sync.putInt("period",30000);
                         editor_sync.putInt("position",3);
                         editor_sync.apply();
                     }break;
                     case 4:{
-                        editor_sync.putInt("period",30000);
-                        editor_sync.putInt("position",4);
-                        editor_sync.apply();
-                    }break;
-                    case 5:{
                         editor_sync.putInt("period",60000);
-                        editor_sync.putInt("position",5);
+                        editor_sync.putInt("position",4);
                         editor_sync.apply();
                     }break;
                 }
@@ -191,6 +191,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
+
 
 
         btn_verific.setOnClickListener(new View.OnClickListener() {
@@ -231,11 +232,65 @@ public class SettingsActivity extends AppCompatActivity {
                 inputSeting.putString("Port",et_port.getText().toString());
                 inputSeting.apply();
 
-                ip_adress = et_adress.getText().toString();
+                ip_address = et_adress.getText().toString();
                 port = et_port.getText().toString();
 
-                URL generatedURL = Ping(ip_adress, port);
-                new AsyncTask_Ping().execute(generatedURL);
+                CommandServices commandServices = ApiUtils.commandService(ip_address + ":" + port);
+                Call<Boolean> call = commandServices.ping();
+
+                call.enqueue(new Callback<Boolean>() {
+                    @Override
+                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                        if (response.body() != null && response.body()) {
+                            et_adress.setBackgroundResource(R.drawable.ping_true_conect);
+
+                            CommandServices commandServices = ApiUtils.commandService(ip_address + ":" + port);
+                            Call<SimpleResultService> callReg = commandServices.registerDevice(device_id);
+
+                            callReg.enqueue(new Callback<SimpleResultService>() {
+                                @Override
+                                public void onResponse(Call<SimpleResultService> call, Response<SimpleResultService> response) {
+                                    SimpleResultService simpleResultService = response.body();
+
+                                    if(simpleResultService != null && simpleResultService.getResult() == 0) {
+                                        pgBar.setVisibility(ProgressBar.INVISIBLE);
+                                        Toast.makeText(SettingsActivity.this, "Dispozitivul este inregistrat!", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else{
+                                        Toast.makeText(SettingsActivity.this, "Dispozitivul nu este inregistrat! Eroare:" + simpleResultService.getResult(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<SimpleResultService> call, Throwable t) {
+                                    Toast.makeText(SettingsActivity.this, "Dispozitivul nu este inregistrat! Eroare: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }else {
+                            pgBar.setVisibility(ProgressBar.INVISIBLE);
+                            et_adress.setBackgroundResource(R.drawable.ping_false_connect);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Boolean> call, Throwable t) {
+                        pgBar.setVisibility(ProgressBar.INVISIBLE);
+                        et_adress.setBackgroundResource(R.drawable.ping_false_connect);
+                    }
+                });
+            }
+        });
+
+        rd_btnCookMonitor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Settings.edit().putInt("WorkAs",BaseEnum.CookMonitor).apply();
+            }
+        });
+        rd_btnOrderMonitor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Settings.edit().putInt("WorkAs",BaseEnum.OrderMonitor).apply();
             }
         });
     }
@@ -292,70 +347,5 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         return super.dispatchTouchEvent(event);
-    }
-
-    class AsyncTask_Ping extends AsyncTask<URL, String, String> {
-
-        @Override
-        protected String doInBackground(URL... urls) {
-            String ping="";
-            try {
-                ping=Response_from_Ping(urls[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return ping;
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            if (response.equals("true")) {
-                et_adress.setBackgroundResource(R.drawable.ping_true_conect);
-
-                URL generateURLRegDev = generateURL_RegDev(ip_adress, port, device_id);
-                new querryReg().execute(generateURLRegDev);
-            }else {
-                this.cancel(true);
-                pgBar.setVisibility(ProgressBar.INVISIBLE);
-                et_adress.setBackgroundResource(R.drawable.ping_false_connect);
-            }
-        }
-    }
-
-    class querryReg extends AsyncTask<URL, String, String> {
-
-        @Override
-        protected String doInBackground(URL... urls) {
-            String response = "null";
-            try {
-                response = getResponseFromDeviceReg(urls[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return response;
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            if (!response.equals("null")) {
-                int result = 255;
-                try {
-                    JSONObject resp = new JSONObject(response);
-                    result = resp.getInt("Result");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if(result == 0){
-                    pgBar.setVisibility(ProgressBar.INVISIBLE);
-                    Toast.makeText(SettingsActivity.this, "Dispozitivul este inregistrat!", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(SettingsActivity.this, "Dispozitivul nu este inregistrat! Eroare:" + result, Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(SettingsActivity.this, "Dispozitivul nu este inregistrat! Eroare de la serviciu.", Toast.LENGTH_SHORT).show();
-            }
-
-        }
     }
 }

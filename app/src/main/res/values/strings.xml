@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">CookMonitor</string>
+    <string name="app_name">MonitorHelper</string>
     <string name="title_activity_settings">SettingsActivity</string>
 </resources>

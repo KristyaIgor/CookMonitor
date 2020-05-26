@@ -5,20 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/btn_finished_cook"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/item_selector_button_blue"
-        android:text="Блюдо уже приготовлено и выдано !"
-        android:textAllCaps="false"
-        android:textColor="@color/color_white_new"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <TextView
         android:id="@+id/textView10"
         android:layout_width="0dp"
@@ -38,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Приступить к приготовлению блюда?"
+        android:text="Потвердить выдача заказа?"
         android:textColor="@color/colorAccent"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,50 +32,51 @@
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
     <TextView
-        android:id="@+id/txt_name_to_cook"
+        android:id="@+id/txt_number_order"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
         android:text="TextView"
         android:textColor="@color/colorPrimary"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt" />
 
     <Button
-        android:id="@+id/btn_cook"
+        android:id="@+id/btn_finis_order"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/item_selector_button_blue"
-        android:text="Приступить"
+        android:text="Потвердить"
         android:textAllCaps="false"
         android:textColor="@color/color_white_new"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_finished_cook"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_cancel"
-        app:layout_constraintTop_toBottomOf="@id/txt_name_to_cook" />
+        app:layout_constraintStart_toEndOf="@+id/btn_cancel_order"
+        app:layout_constraintTop_toBottomOf="@id/txt_number_order" />
 
     <Button
-        android:id="@+id/btn_cancel"
+        android:id="@+id/btn_cancel_order"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/item_selector_button_blue"
         android:text="Отмена"
         android:textAllCaps="false"
         android:textColor="@color/color_white_new"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_finished_cook"
-        app:layout_constraintEnd_toStartOf="@+id/btn_cook"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_finis_order"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_name_to_cook" />
+        app:layout_constraintTop_toBottomOf="@id/txt_number_order" />
 </androidx.constraintlayout.widget.ConstraintLayout>

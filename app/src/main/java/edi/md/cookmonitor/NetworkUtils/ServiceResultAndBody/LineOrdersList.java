@@ -1,14 +1,18 @@
-
-package edi.md.cookmonitor.NetworkUtils;
-
+package edi.md.cookmonitor.NetworkUtils.ServiceResultAndBody;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class OrdersLinesList {
+/**
+ * Created by Igor on 19.05.2020
+ */
 
+public class LineOrdersList {
     @SerializedName("AssortimentName")
     @Expose
     private String assortimentName;
+    @SerializedName("Comment")
+    @Expose
+    private String comment;
     @SerializedName("Count")
     @Expose
     private Double count;
@@ -18,9 +22,6 @@ public class OrdersLinesList {
     @SerializedName("DateStarted")
     @Expose
     private Object dateStarted;
-    @SerializedName("Delivery")
-    @Expose
-    private Boolean delivery;
     @SerializedName("DepartmentTypeName")
     @Expose
     private String departmentTypeName;
@@ -51,6 +52,14 @@ public class OrdersLinesList {
         this.assortimentName = assortimentName;
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     public Double getCount() {
         return count;
     }
@@ -73,14 +82,6 @@ public class OrdersLinesList {
 
     public void setDateStarted(Object dateStarted) {
         this.dateStarted = dateStarted;
-    }
-
-    public Boolean getDelivery() {
-        return delivery;
-    }
-
-    public void setDelivery(Boolean delivery) {
-        this.delivery = delivery;
     }
 
     public String getDepartmentTypeName() {
@@ -138,5 +139,4 @@ public class OrdersLinesList {
     public void setUid(String uid) {
         this.uid = uid;
     }
-
 }

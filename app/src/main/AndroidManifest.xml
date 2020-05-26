@@ -19,20 +19,27 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:configChanges="orientation"
-            android:screenOrientation="landscape"
+            android:screenOrientation="fullSensor"
             android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
         <activity android:name=".MainActivity"
             android:configChanges="orientation"
-            android:screenOrientation="landscape">
+            android:screenOrientation="fullSensor">
+        </activity>
+        <activity android:name=".StartedActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="bb23252915ed55596257f7e1c85fd17cc9a35497" />
     </application>
 
 </manifest>
