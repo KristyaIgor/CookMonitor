@@ -50,17 +50,25 @@ public class InQueueListAdapter extends ArrayAdapter<OrdersLinesList> {
                 name.setText(p.getAssortimentName());
             }
             if (prepRate != null) {
-                prepRate.setText(String.valueOf(p.getPreparationRate()));
+                if(p.getPreparationRate() == 0)
+                    prepRate.setText("--");
+                else if(p.getPreparationRate() < 60)
+                    prepRate.setText(String.valueOf(p.getPreparationRate()) + "m");
+                else if(p.getPreparationRate() > 60 && p.getPreparationRate() < 120)
+                    prepRate.setText("1h " + String.valueOf(p.getPreparationRate() - 60) + "m");
             }
             if (number != null) {
                 number.setText(String.valueOf(p.getNumber()));
             }
             if (count != null) {
-                count.setText(String.format("%.2f", p.getCount()));
+                count.setText(String.format("%.2f", p.getCount()).replace(",","."));
             }
-            if (comment != null) {
+            if (p.getComment() != null && !p.getComment().equals("")) {
+                comment.setVisibility(View.VISIBLE);
                 comment.setText(p.getComment());
             }
+            else
+                comment.setVisibility(View.GONE);
         }
 
         return v;

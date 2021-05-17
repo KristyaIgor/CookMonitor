@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Внутрений код: "
+        android:text="Codul intern:"
         android:textColor="@android:color/black"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Лицензия: "
+        android:text="Licenta:"
         android:textColor="@android:color/black"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +52,7 @@
         android:background="@drawable/round_corners_transparent"
         android:ems="10"
         android:gravity="center"
-        android:hint="лицензия"
+        android:hint="Codul"
         android:inputType="text"
         android:textAllCaps="true"
         android:textColor="@android:color/black"
@@ -69,7 +69,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/item_selector_button_blue"
-        android:text="Проверить лицензию"
+        android:text="Verifica licenta"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
         android:textSize="24sp"
@@ -87,7 +87,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/item_selector_button_blue"
-        android:text="Проверить поключение"
+        android:text="Verifica conexiune"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
         android:textSize="24sp"
@@ -131,7 +131,7 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/round_corners_transparent"
         android:ems="10"
-        android:hint="Порт подключения"
+        android:hint="Port"
         android:inputType="number"
         android:padding="5dp"
         android:textSize="22sp"
@@ -146,7 +146,7 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/round_corners_transparent"
         android:ems="10"
-        android:hint="Адрес подключения"
+        android:hint="Adresa IP"
         android:inputType="text"
         android:padding="5dp"
         android:textSize="22sp"
@@ -172,7 +172,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Время обновления:"
+        android:text="Timpul de actualizare:"
         android:textColor="@android:color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -209,7 +209,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="5dp"
-        android:text="Device ID: "
+        android:text="Dispozitiv ID: "
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/txt_device_id"
@@ -217,6 +217,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <RadioGroup
+        android:id="@+id/radioGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -232,8 +233,8 @@
             android:layout_height="wrap_content"
             android:layoutDirection="rtl"
             android:padding="5dp"
-            android:text="Cook Monitor"
-            android:textSize="18sp" />
+            android:text="Bucatar"
+            android:textSize="20sp" />
 
         <RadioButton
             android:id="@+id/rd_order_monitor"
@@ -241,8 +242,8 @@
             android:layout_height="wrap_content"
             android:layoutDirection="rtl"
             android:padding="5dp"
-            android:text="Order Monitor"
-            android:textSize="18sp" />
+            android:text="Eliberare"
+            android:textSize="20sp" />
     </RadioGroup>
 
     <TextView
@@ -252,11 +253,46 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Select mode work application:"
+        android:text="Modul de lucru:"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner_time_update" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/item_selector_button_blue"
+        android:text="Update"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+    <ToggleButton
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="ToggleButton"
+        android:textOff="Doar un mod de lucru"
+        android:textOn="Mod de lucru la alegere"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+    <TextView
+        android:id="@+id/textAppVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

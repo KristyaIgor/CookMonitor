@@ -1,9 +1,15 @@
 package edi.md.cookmonitor;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,33 +24,43 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import edi.md.cookmonitor.NetworkUtils.ApiUtils;
 import edi.md.cookmonitor.NetworkUtils.CommandServices;
+import edi.md.cookmonitor.NetworkUtils.RemoteConfigHelper;
 import edi.md.cookmonitor.NetworkUtils.ServiceResultAndBody.LineOrdersList;
 import edi.md.cookmonitor.NetworkUtils.ServiceResultAndBody.OrdersList;
 import edi.md.cookmonitor.NetworkUtils.ServiceResultAndBody.ResponseOrderList;
 import edi.md.cookmonitor.NetworkUtils.ServiceResultAndBody.SimpleResultService;
 import edi.md.cookmonitor.Obejcts.Order;
+import edi.md.cookmonitor.adapters.AdapterLinesDialogOrder;
 import edi.md.cookmonitor.adapters.ExecutableListAdapter;
 import edi.md.cookmonitor.adapters.InQueueListAdapter;
 import edi.md.cookmonitor.adapters.OrdersListGridAdapter;
-import io.fabric.sdk.android.Fabric;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import edi.md.cookmonitor.NetworkUtils.ServiceResultAndBody.OrdersLinesList;
 import edi.md.cookmonitor.NetworkUtils.ServiceResultAndBody.ResponseAction;
 import edi.md.cookmonitor.NetworkUtils.ServiceResultAndBody.ResponseCurrentOrderLines;
+import edi.md.cookmonitor.utils.Beeper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -52,8 +68,8 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     String terminalID, ip, port, UidFinished, UidQueque;
     int  period = 0;
-    ListView lv_queues, lv_execut;
-    AlertDialog inQueue, executeDialog;
+    GridView lv_queues, lv_execut;
+    AlertDialog inQueue, executeDialog, orderDialog;
 
     TimerTask timerTaskGetOrderLines,timerTaskGetOrdersList;
     Timer timerGetOrderLines,timerGetOrdersList;
@@ -76,34 +92,170 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog pgH;
 
+    Button changeMonitor, changeMonitortoCook;
+
+    SimpleDateFormat simpleDateFormatMD;
+    TimeZone timeZoneMD;
+
+    Beeper beeper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         settingsPreference = getSharedPreferences("Settings", MODE_PRIVATE);
-        int selectedModeWork = settingsPreference.getInt("WorkAs",BaseEnum.NONE_SELECTED_MODE);
 
-        if(selectedModeWork == BaseEnum.CookMonitor){
-            initUIElementsCookMonitor();
-        }
-        else if(selectedModeWork == BaseEnum.OrderMonitor){
-            initUIElementsOrderMonitor();
-        }
+        simpleDateFormatMD = new SimpleDateFormat("HH:mm:ss");
+        timeZoneMD = TimeZone.getTimeZone("Europe/Chisinau");
+        simpleDateFormatMD.setTimeZone(timeZoneMD);
 
+        pgH = new ProgressDialog(this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme);
+
+
+        pgH.setMessage("Validare...");
+        pgH.setCancelable(false);
+        pgH.setIndeterminate(true);
+        pgH.show();
+
+        FirebaseApp.initializeApp(this);
+
+        final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
+
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(0)
+                .build();
+        remoteConfig.setConfigSettingsAsync(configSettings);
+
+        //defaultvalue
+
+        Map<String,Object> defaultValue = new HashMap<>();
+        defaultValue.put(RemoteConfigHelper.KEY_COMPANY_NAME,true);
+
+        remoteConfig.setDefaultsAsync(defaultValue);
+
+        remoteConfig.fetchAndActivate().addOnCompleteListener( new OnCompleteListener<Boolean>() {
+            @Override
+            public void onComplete(@NonNull Task<Boolean> task) {
+                if(task.isSuccessful()){
+                    Log.d("TAG", "remote config is fetched.");
+
+                    FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
+
+                    boolean companyName = remoteConfig.getBoolean("star_kebab");
+
+                    pgH.dismiss();
+                    checkLicense(true,companyName);
+                }
+                else {
+                    pgH.dismiss();
+                    checkLicense(false, true);
+                }
+            }
+        });
 
     }
+
+    public void checkLicense(boolean remoteFetched, boolean isActive){
+        keyStart = settingsPreference.getBoolean("Key", false);
+        int mode = settingsPreference.getInt("WorkAs",BaseEnum.NONE_SELECTED_MODE);
+        if(remoteFetched){
+            if (isActive){
+                if(keyStart){
+                    if(mode == BaseEnum.CookMonitor){
+                        stopTimerOrdersList();
+                        initUIElementsCookMonitor();
+                    }
+                    else if(mode == BaseEnum.OrderMonitor){
+                        stopTimerOrderLines();
+                        initUIElementsOrderMonitor();
+                    }
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "Nu aveti acces! Apelati la distribuitor!", Toast.LENGTH_SHORT).show();
+                    initUIElementsNoAccess();
+                }
+            }
+            else{
+                Toast.makeText(MainActivity.this, "Nu aveti acces! Apelati la distribuitor!", Toast.LENGTH_SHORT).show();
+                initUIElementsNoAccess();
+            }
+        }
+        else {
+            if (keyStart) {
+                if (mode == BaseEnum.CookMonitor) {
+                    stopTimerOrdersList();
+                    initUIElementsCookMonitor();
+                } else if (mode == BaseEnum.OrderMonitor) {
+                    stopTimerOrderLines();
+                    initUIElementsOrderMonitor();
+                }
+            } else {
+                Toast.makeText(MainActivity.this, "Nu aveti acces! Apelati la distribuitor!", Toast.LENGTH_SHORT).show();
+                initUIElementsNoAccess();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 101){
+            keyStart = settingsPreference.getBoolean("Key", false);
+            int mode = settingsPreference.getInt("WorkAs",BaseEnum.NONE_SELECTED_MODE);
+            if (keyStart) {
+                if (mode == BaseEnum.CookMonitor) {
+                    stopTimerOrdersList();
+                    initUIElementsCookMonitor();
+                } else if (mode == BaseEnum.OrderMonitor) {
+                    stopTimerOrderLines();
+                    initUIElementsOrderMonitor();
+                }
+            } else {
+                Toast.makeText(MainActivity.this, "Nu aveti acces! Apelati la distribuitor!", Toast.LENGTH_SHORT).show();
+                initUIElementsNoAccess();
+            }
+        }
+    }
+
+    private void initUIElementsNoAccess() {
+        setContentView(R.layout.activity_main_no_access);
+
+        Toolbar toolbar = findViewById(R.id.toolbar_no_acces);
+        setSupportActionBar(toolbar);
+
+        Button exit = findViewById(R.id.buttonExit);
+
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
+
+    /**
+     * initializarea elementelor si toate procesele/functii pentru modul bucatarului
+     * primirea comenzilor de la casa
+     * functia pentru primirea comenzilor in regim de bucatar GetCurrentOrderLines
+     */
 
     private void initUIElementsCookMonitor() {
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = findViewById(R.id.toolbar_cook);
+        setSupportActionBar(toolbar);
+
         lv_queues = findViewById(R.id.list_order_in_rind);
         lv_execut = findViewById(R.id.list_order_execut);
         bomj_image = findViewById(R.id.imageView_bomj);
+
+        changeMonitor = findViewById(R.id.button_switch);
+
 
         settingsPreference = getSharedPreferences("Settings", MODE_PRIVATE);
 
@@ -112,22 +264,21 @@ public class MainActivity extends AppCompatActivity {
         port = settingsPreference.getString("Port", "");
 
         period = settingsPreference.getInt("period", 0);
-        keyStart = settingsPreference.getBoolean("Key", false);
+
 
         pgH = new ProgressDialog(this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme);
 
-        if (keyStart) {
-            bomj_image.setVisibility(View.INVISIBLE);
-            GetCurrentOrderLines(ip, port, terminalID,false);
+        getCookMonitorLines(ip, port, terminalID,false);
+        if (period != 0) {
+            timerTaskGetCookMonitorLines(period);
+        }
 
-            if (period != 0) {
-                startTimerTaskGetOrderLines(period);
-            }
-        }
-        else {
-            bomj_image.setVisibility(View.VISIBLE);
-            Toast.makeText(MainActivity.this, "Licenta nu este valida!", Toast.LENGTH_SHORT).show();
-        }
+        int workMode = settingsPreference.getInt("ModeWork",BaseEnum.NoneMode);
+
+        if(workMode == BaseEnum.OneMode)
+            changeMonitor.setVisibility(View.GONE);
+        else
+            changeMonitor.setVisibility(View.VISIBLE);
 
         lv_queues.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -135,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
                 OrdersLinesList lines = adapterInQueue.getItem(position);
                 if(lines != null){
                     UidQueque = lines.getUid();
-                    String Name = lines.getAssortimentName();
+                    String productName = lines.getAssortimentName();
 
                     LayoutInflater inflater = MainActivity.this.getLayoutInflater();
                     View dialogView = inflater.inflate(R.layout.msg_go_to_cook, null);
@@ -144,100 +295,88 @@ public class MainActivity extends AppCompatActivity {
 
                     inQueue = new AlertDialog.Builder(MainActivity.this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme).create();
                     inQueue.setView(dialogView);
-                    inQueue.setCancelable(false);
 
-                    Button btnCook = dialogView.findViewById(R.id.btn_cook);
-                    Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
-                    Button btnFinished = dialogView.findViewById(R.id.btn_finished_cook);
-                    final TextView txtName = dialogView.findViewById(R.id.txt_name_to_cook);
+                    Button cook = dialogView.findViewById(R.id.btn_cook);
+                    Button cooked = dialogView.findViewById(R.id.btn_finished_cook);
+                    Button cancel = dialogView.findViewById(R.id.btn_cancel_coock);
+                    final TextView productTitle = dialogView.findViewById(R.id.txt_name_to_cook);
 
-                    txtName.setText(Name);
+                    productTitle.setText(productName);
 
-                    btnCancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            inQueue.dismiss();
-                            if (period != 0) {
-                                startTimerTaskGetOrderLines(period);
+                    cook.setOnClickListener(v -> {
+                        terminalID = settingsPreference.getString("DeviceId", "");
+                        ip = settingsPreference.getString("IP", "");
+                        port = settingsPreference.getString("Port", "");
+
+                        CommandServices serviceMarkStarted = ApiUtils.commandService( ip + ":" + port);
+                        final Call<ResponseAction> responseActionCall = serviceMarkStarted.markAsStart(UidQueque);
+
+                        responseActionCall.enqueue(new Callback<ResponseAction>() {
+                            @Override
+                            public void onResponse(Call<ResponseAction> call, Response<ResponseAction> response) {
+                                if (response.isSuccessful()) {
+                                    ResponseAction responseAction = response.body();
+                                    int result = responseAction.getResult();
+                                    if (result == 0) {
+                                        inQueue.dismiss();
+
+                                        getCookMonitorLines(ip, port, terminalID,false);
+                                        if (period != 0) {
+                                            timerTaskGetCookMonitorLines(period);
+                                        }
+                                    } else {
+                                        Toast.makeText(MainActivity.this, "Erroare!Codul:" + result, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
                             }
-                        }
+
+                            @Override
+                            public void onFailure(Call<ResponseAction> call, Throwable t) {
+
+                            }
+                        });
                     });
 
-                    btnCook.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            terminalID = settingsPreference.getString("DeviceId", "");
-                            ip = settingsPreference.getString("IP", "");
-                            port = settingsPreference.getString("Port", "");
+                    cooked.setOnClickListener(v -> {
+                        terminalID = settingsPreference.getString("DeviceId", "");
+                        ip = settingsPreference.getString("IP", "");
+                        port = settingsPreference.getString("Port", "");
 
-                            CommandServices serviceMarkStarted = ApiUtils.commandService( ip + ":" + port);
-                            final Call<ResponseAction> responseActionCall = serviceMarkStarted.markAsStart(UidQueque);
+                        CommandServices commandServices = ApiUtils.commandService(ip+ ":" + port);
+                        final Call<ResponseAction> responseActionCall = commandServices.markAsFinished(UidQueque);
 
-                            responseActionCall.enqueue(new Callback<ResponseAction>() {
-                                @Override
-                                public void onResponse(Call<ResponseAction> call, Response<ResponseAction> response) {
-                                    if (response.isSuccessful()) {
-                                        ResponseAction responseAction = response.body();
-                                        int result = responseAction.getResult();
-                                        if (result == 0) {
-                                            inQueue.dismiss();
-
-                                            GetCurrentOrderLines(ip, port, terminalID,false);
-                                            if (period != 0) {
-                                                startTimerTaskGetOrderLines(period);
-                                            }
-                                        } else {
-                                            Toast.makeText(MainActivity.this, "Erroare!Codul:" + result, Toast.LENGTH_SHORT).show();
-                                        }
+                        responseActionCall.enqueue(new Callback<ResponseAction>() {
+                            @Override
+                            public void onResponse(Call<ResponseAction> call, Response<ResponseAction> response) {
+                                if (response.isSuccessful()) {
+                                    ResponseAction responseAction = response.body();
+                                    int result = responseAction.getResult();
+                                    if (result == 0) {
+                                        getCookMonitorLines(ip, port, terminalID,false);
+                                        inQueue.dismiss();
+                                    } else {
+                                        Toast.makeText(MainActivity.this, "Erroare!Codul:" + result, Toast.LENGTH_SHORT).show();
                                     }
                                 }
+                            }
+                            @Override
+                            public void onFailure(Call<ResponseAction> call, Throwable t) {
 
-                                @Override
-                                public void onFailure(Call<ResponseAction> call, Throwable t) {
-
-                                }
-                            });
-                        }
+                            }
+                        });
                     });
 
-                    btnFinished.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            terminalID = settingsPreference.getString("DeviceId", "");
-                            ip = settingsPreference.getString("IP", "");
-                            port = settingsPreference.getString("Port", "");
-
-                            CommandServices commandServices = ApiUtils.commandService(ip+ ":" + port);
-                            final Call<ResponseAction> responseActionCall = commandServices.markAsFinished(UidQueque);
-
-                            responseActionCall.enqueue(new Callback<ResponseAction>() {
-                                @Override
-                                public void onResponse(Call<ResponseAction> call, Response<ResponseAction> response) {
-                                    if (response.isSuccessful()) {
-                                        ResponseAction responseAction = response.body();
-                                        int result = responseAction.getResult();
-                                        if (result == 0) {
-                                            inQueue.dismiss();
-
-                                            GetCurrentOrderLines(ip, port, terminalID,false);
-                                            if (period != 0) {
-                                                startTimerTaskGetOrderLines(period);
-                                            }
-                                        } else {
-                                            Toast.makeText(MainActivity.this, "Erroare!Codul:" + result, Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<ResponseAction> call, Throwable t) {
-
-                                }
-                            });
-                        }
+                    cancel.setOnClickListener(v -> {
+                        inQueue.dismiss();
                     });
 
                     inQueue.show();
+
+                    inQueue.setOnDismissListener(dialog -> {
+                        if (period != 0) {
+                            timerTaskGetCookMonitorLines(period);
+                        }
+                    });
                 }
             }
         });
@@ -248,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
                 OrdersLinesList lines = adapterExecutable.getItem(position);
                 if(lines != null){
                     UidFinished = lines.getUid();
-                    String Name = lines.getAssortimentName();
+                    String productName = lines.getAssortimentName();
 
                     LayoutInflater inflater = MainActivity.this.getLayoutInflater();
                     View dialogView = inflater.inflate(R.layout.msg_dishes_final, null);
@@ -257,70 +396,77 @@ public class MainActivity extends AppCompatActivity {
 
                     executeDialog = new AlertDialog.Builder(MainActivity.this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme).create();
                     executeDialog.setView(dialogView);
-                    executeDialog.setCancelable(false);
 
-                    Button btnGive = dialogView.findViewById(R.id.btn_execut);
-                    Button btnCancel = dialogView.findViewById(R.id.btn_cancel_execut);
-                    final TextView txtName = dialogView.findViewById(R.id.txt_name_to_give);
+                    Button confirm = dialogView.findViewById(R.id.btn_execut);
+                    Button cancel = dialogView.findViewById(R.id.btn_cancel_execut);
+                    TextView productTitle = dialogView.findViewById(R.id.txt_name_to_give);
 
-                    txtName.setText(Name);
+                    productTitle.setText(productName);
 
-                    btnCancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            executeDialog.dismiss();
-                            if (period != 0) {
-                                startTimerTaskGetOrderLines(period);
-                            }
-                        }
-                    });
+                    confirm.setOnClickListener(v -> {
+                        terminalID = settingsPreference.getString("DeviceId", "");
+                        ip = settingsPreference.getString("IP", "");
+                        port = settingsPreference.getString("Port", "");
 
-                    btnGive.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            terminalID = settingsPreference.getString("DeviceId", "");
-                            ip = settingsPreference.getString("IP", "");
-                            port = settingsPreference.getString("Port", "");
+                        CommandServices commandServices = ApiUtils.commandService(ip+ ":" + port);
+                        final Call<ResponseAction> responseActionCall = commandServices.markAsFinished(UidFinished);
 
-                            CommandServices commandServices = ApiUtils.commandService(ip+ ":" + port);
-                            final Call<ResponseAction> responseActionCall = commandServices.markAsFinished(UidFinished);
-
-                            responseActionCall.enqueue(new Callback<ResponseAction>() {
-                                @Override
-                                public void onResponse(Call<ResponseAction> call, Response<ResponseAction> response) {
-                                    if (response.isSuccessful()) {
-                                        ResponseAction responseAction = response.body();
-                                        int result = responseAction.getResult();
-                                        if (result == 0) {
-                                            executeDialog.dismiss();
-
-                                            GetCurrentOrderLines(ip, port, terminalID,false);
-                                            if (period != 0) {
-                                                startTimerTaskGetOrderLines(period);
-                                            }
-                                        } else {
-                                            Toast.makeText(MainActivity.this, "Erroare!Codul:" + result, Toast.LENGTH_SHORT).show();
-                                        }
+                        responseActionCall.enqueue(new Callback<ResponseAction>() {
+                            @Override
+                            public void onResponse(Call<ResponseAction> call, Response<ResponseAction> response) {
+                                if (response.isSuccessful()) {
+                                    ResponseAction responseAction = response.body();
+                                    int result = responseAction.getResult();
+                                    if (result == 0) {
+                                        getCookMonitorLines(ip, port, terminalID,false);
+                                        executeDialog.dismiss();
+                                    } else {
+                                        Toast.makeText(MainActivity.this, "Erroare!Codul:" + result, Toast.LENGTH_SHORT).show();
                                     }
                                 }
+                            }
 
-                                @Override
-                                public void onFailure(Call<ResponseAction> call, Throwable t) {
+                            @Override
+                            public void onFailure(Call<ResponseAction> call, Throwable t) {
 
-                                }
-                            });
-                        }
-
-
+                            }
+                        });
                     });
+
+                    cancel.setOnClickListener(v -> {
+                        executeDialog.dismiss();
+                    });
+
                     executeDialog.show();
+
+                    executeDialog.setOnDismissListener(dialog -> {
+                        if (period != 0) {
+                            timerTaskGetCookMonitorLines(period);
+                        }
+                    });
                 }
+            }
+        });
+
+        changeMonitor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopTimerOrderLines();
+                getSharedPreferences("Settings", MODE_PRIVATE).edit().putInt("WorkAs",BaseEnum.OrderMonitor).apply();
+
+                Log.d("TAG", "Start activity: change monitor: cook monitor -> order monitor");
+                MainActivity.this.startActivity(new Intent(MainActivity.this,MainActivity.class));
             }
         });
     }
 
     private void initUIElementsOrderMonitor() {
         setContentView(R.layout.activity_main_order);
+
+        Toolbar toolbar = findViewById(R.id.toolbar_request);
+        setSupportActionBar(toolbar);
+
+        changeMonitortoCook = findViewById(R.id.button_switch_to_cook);
 
         gridOrders = findViewById(R.id.grid_view_list_orders);
 
@@ -331,17 +477,20 @@ public class MainActivity extends AppCompatActivity {
         port = settingsPreference.getString("Port", "");
 
         period = settingsPreference.getInt("period", 0);
-        keyStart = settingsPreference.getBoolean("Key", false);
         pgH = new ProgressDialog(this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme);
 
-        if (keyStart) {
-            GetCurrentOrdersList(ip+ ":" + port, 36,true,false);
 
-            if (period != 0) {
-                startTimerTaskGetOrdersList(period);
-            }
-
+        getOrderMonitorList(ip+ ":" + port, 36,true,false);
+        if (period != 0) {
+            timerTaskOrderMonitorList(period);
         }
+
+        int workMode = settingsPreference.getInt("ModeWork",BaseEnum.NoneMode);
+
+        if(workMode == BaseEnum.OneMode)
+            changeMonitortoCook.setVisibility(View.GONE);
+        else
+            changeMonitortoCook.setVisibility(View.VISIBLE);
 
         gridOrders.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -351,32 +500,98 @@ public class MainActivity extends AppCompatActivity {
                     orderUid = order.getUid();
                     String number = String.valueOf(order.getNumber());
 
+                    List<LineOrdersList> orderLines = order.getLines();
+
                     LayoutInflater inflater = MainActivity.this.getLayoutInflater();
                     View dialogView = inflater.inflate(R.layout.msg_make_order_final, null);
 
-                    if (timerTaskGetOrdersList != null) {
-                        timerTaskGetOrdersList.cancel();
-                    }
+                    stopTimerOrdersList();
 
-                    executeDialog = new AlertDialog.Builder(MainActivity.this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme).create();
-                    executeDialog.setView(dialogView);
-                    executeDialog.setCancelable(false);
+                    orderDialog = new AlertDialog.Builder(MainActivity.this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme).create();
+                    orderDialog.setView(dialogView);
 
                     Button btnGive = dialogView.findViewById(R.id.btn_finis_order);
+                    Button btnPrepared = dialogView.findViewById(R.id.btn_order_prepared);
                     Button btnCancel = dialogView.findViewById(R.id.btn_cancel_order);
                     final TextView txtName = dialogView.findViewById(R.id.txt_number_order);
+                    TextView textDateCooked = dialogView.findViewById(R.id.textDateBillCooked);
+                    RecyclerView recyclerView = dialogView.findViewById(R.id.lineOrderList);
 
-                    txtName.setText(number);
+                    long currDate = new Date().getTime();
+                    long orderCreatedDate = order.getDateCreated();
+                    long orderCooked = currDate - orderCreatedDate;
+
+                    long minute = (orderCooked / (1000 * 60)) % 60;
+                    long hour = (orderCooked / (1000 * 60 * 60)) % 24;
+
+                    String time = String.format("%02d:%02d", hour, minute);
+                    Log.d("TimerShift", "Shift need closed! " + time);
+
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false);
+                    recyclerView.setLayoutManager(layoutManager);
+//                    DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
+//                    recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(2));
+
+                    AdapterLinesDialogOrder adapterLinesDialogOrder = new AdapterLinesDialogOrder(orderLines);
+                    recyclerView.setAdapter(adapterLinesDialogOrder);
+
+                    textDateCooked.setText("In proces: " + time + " min.");
+
+                    txtName.setText("Comanda : " + number);
 
                     btnCancel.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            executeDialog.dismiss();
+                            orderDialog.dismiss();
                             if (period != 0) {
-                                startTimerTaskGetOrdersList(period);
+                                timerTaskOrderMonitorList(period);
                             }
                         }
                     });
+
+                    btnPrepared.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ip = settingsPreference.getString("IP", "");
+                            port = settingsPreference.getString("Port", "");
+
+                            CommandServices commandServices = ApiUtils.commandService(ip+ ":" + port);
+                            final Call<SimpleResultService> responseActionCall = commandServices.markOrderAsPrepared(orderUid);
+
+                            responseActionCall.enqueue(new Callback<SimpleResultService>() {
+                                @Override
+                                public void onResponse(Call<SimpleResultService> call, Response<SimpleResultService> response) {
+                                    if (response.isSuccessful()) {
+                                        SimpleResultService responseAction = response.body();
+                                        int result = responseAction.getResult();
+                                        if (result == 0) {
+                                            Log.d("TAG", "markOrderAsPrepared - error code: " + result);
+                                            orderDialog.dismiss();
+
+                                            getOrderMonitorList(ip+ ":" + port, 36,true,false);
+                                            if (period != 0) {
+                                                timerTaskOrderMonitorList(period);
+                                            }
+
+                                        } else {
+                                            Log.d("TAG", "markOrderAsPrepared - error code: " + result);
+                                            Toast.makeText(MainActivity.this, "Erroare!Codul:" + result, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                    else{
+                                        Log.d("TAG", "markOrderAsPrepared: un success");
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<SimpleResultService> call, Throwable t) {
+                                    Toast.makeText(MainActivity.this, "Erroare!Mesaj: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Log.d("TAG", "markOrderAsPrepared: onFailure: " + t.getMessage());
+                                }
+                            });
+                        }
+                    });
+
 
                     btnGive.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -394,30 +609,55 @@ public class MainActivity extends AppCompatActivity {
                                         SimpleResultService responseAction = response.body();
                                         int result = responseAction.getResult();
                                         if (result == 0) {
-                                            executeDialog.dismiss();
+                                            orderDialog.dismiss();
+                                            Log.d("TAG", "markOrderAsFinished - error code: " + result);
 
-                                            GetCurrentOrdersList(ip+ ":" + port, 36,true,false);
+                                            getOrderMonitorList(ip+ ":" + port, 36,true,false);
                                             if (period != 0) {
-                                                startTimerTaskGetOrdersList(period);
+                                                timerTaskOrderMonitorList(period);
                                             }
 
                                         } else {
+                                            Log.d("TAG", "markOrderAsFinished - error code: " + result);
                                             Toast.makeText(MainActivity.this, "Erroare!Codul:" + result, Toast.LENGTH_SHORT).show();
                                         }
+                                    }
+                                    else{
+                                        Log.d("TAG", "markOrderAsFinished: un success");
                                     }
                                 }
 
                                 @Override
                                 public void onFailure(Call<SimpleResultService> call, Throwable t) {
-
+                                    Log.d("TAG", "markOrderAsFinished - onFailure: " + t.getMessage());
                                 }
                             });
                         }
 
 
                     });
-                    executeDialog.show();
+                    orderDialog.show();
+
+                    orderDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            if (period != 0) {
+                                timerTaskOrderMonitorList(period);
+                            }
+                        }
+                    });
                 }
+            }
+        });
+
+        changeMonitortoCook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopTimerOrdersList();
+                getSharedPreferences("Settings", MODE_PRIVATE).edit().putInt("WorkAs",BaseEnum.CookMonitor).apply();
+
+                Log.d("TAG", "Start activity: change monitor: order monitor -> cook monitor");
+                MainActivity.this.startActivity(new Intent(MainActivity.this,MainActivity.class));
             }
         });
 
@@ -451,31 +691,33 @@ public class MainActivity extends AppCompatActivity {
             }
             break;
             case R.id.action_refresh: {
-                pgH.setMessage("loading...");
-                pgH.setIndeterminate(true);
-                pgH.setCancelable(false);
-                pgH.show();
-
                 if(settingsPreference.getInt("WorkAs",BaseEnum.NONE_SELECTED_MODE) == BaseEnum.CookMonitor){
                     if (keyStart){
+                        pgH.setMessage("loading lines...");
+                        pgH.setIndeterminate(true);
+                        pgH.setCancelable(false);
+                        pgH.show();
+
                         if(period == 0){
-                            GetCurrentOrderLines(ip, port, terminalID,false);
+                            getCookMonitorLines(ip, port, terminalID,false);
                         }
                         else{
                             stopTimerOrderLines();
-                            GetCurrentOrderLines(ip, port, terminalID,true);
+                            getCookMonitorLines(ip, port, terminalID,true);
                         }
                     }
                 }
                 else if(settingsPreference.getInt("WorkAs",BaseEnum.NONE_SELECTED_MODE) == BaseEnum.OrderMonitor){
                     if (keyStart){
-                        if(period == 0){
-                            GetCurrentOrderLines(ip, port, terminalID,false);
-                        }
-                        else{
+                        pgH.setMessage("loading order list...");
+                        pgH.setIndeterminate(true);
+                        pgH.setCancelable(false);
+                        pgH.show();
+
+                        if (period != 0) {
                             stopTimerOrdersList();
-                            GetCurrentOrdersList(ip + ":" + port, 36,true,true);
                         }
+                        getOrderMonitorList(ip + ":" + port, 36,true,true);
                     }
                 }
 
@@ -485,19 +727,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void GetCurrentOrderLines(final String ipAddress, final String portNumber, final String terminalId, final boolean refresh) {
-        if (adapterExecutable != null)
-            adapterExecutable.clear();
-        if (adapterInQueue != null)
-            adapterInQueue.clear();
-
-        if (inQueue != null && inQueue.isShowing()) {
-            inQueue.dismiss();
-        }
-        if (executeDialog != null && executeDialog.isShowing()) {
-            executeDialog.dismiss();
-        }
-
+    private void getCookMonitorLines(final String ipAddress, final String portNumber, final String terminalId, final boolean refresh) {
         CommandServices getCurrentOrderLines = ApiUtils.commandService( ipAddress + ":" + portNumber);
         final Call<ResponseCurrentOrderLines> billListCall = getCurrentOrderLines.getCurrentOrdersList(terminalId);
 
@@ -505,24 +735,28 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseCurrentOrderLines> call, Response<ResponseCurrentOrderLines> response) {
                 ResponseCurrentOrderLines responseBillsList = response.body();
-
                 if (responseBillsList != null && responseBillsList.getResult() == 0) {
+                    Log.d("TAG", "getCookMonitorLines - error code: " + responseBillsList.getResult());
                     if(responseBillsList.getOrdersList() != null){
+                        if(inQueue == null || !inQueue.isShowing() && executeDialog == null || !executeDialog.isShowing()) {
+                            if (adapterExecutable != null)
+                                adapterExecutable.clear();
+                            if (adapterInQueue != null)
+                                adapterInQueue.clear();
 
+                            List<OrdersLinesList> ordersLinesLists = responseBillsList.getOrdersList();
 
-                        List<OrdersLinesList> ordersLinesLists = responseBillsList.getOrdersList();
+                            for (OrdersLinesList ordersLinesList : ordersLinesLists) {
+                                int mPreparationRate = ordersLinesList.getPreparationRate();
+                                int mState = ordersLinesList.getState();
 
-                        for (OrdersLinesList ordersLinesList : ordersLinesLists) {
-                            int mPreparationRate = ordersLinesList.getPreparationRate();
-                            int mState = ordersLinesList.getState();
-
-                            if (mState == 2) {
-                                listInQueue.add(ordersLinesList);
+                                if (mState == 2) {
+                                    listInQueue.add(ordersLinesList);
+                                }
+                                if (mState == 3) {
+                                    listExecutable.add(ordersLinesList);
+                                }
                             }
-                            if (mState == 3) {
-                                listExecutable.add(ordersLinesList);
-                            }
-
                             sortListInQueue(listInQueue);
                             sortListInQueue(listExecutable);
 
@@ -534,32 +768,41 @@ public class MainActivity extends AppCompatActivity {
 
                             if(refresh){
                                 if (period != 0) {
-                                    startTimerTaskGetOrderLines(period);
+                                    timerTaskGetCookMonitorLines(period);
                                 }
+                                if(pgH != null && pgH.isShowing())
+                                    pgH.dismiss();
                             }
                             if(pgH != null && pgH.isShowing())
                                 pgH.dismiss();
                         }
                     }
                     else {
-                        //TODO list line null
+                        if(pgH != null && pgH.isShowing())
+                            pgH.dismiss();
+                        Toast.makeText(MainActivity.this, "Error, list line is null!" , Toast.LENGTH_SHORT).show();
                     }
-
                 }
                 else {
-                    //TODO error download orderLines
+                    if(pgH != null && pgH.isShowing())
+                        pgH.dismiss();
+                    Toast.makeText(MainActivity.this, "Error from service order lines: " + responseBillsList.getResult(), Toast.LENGTH_SHORT).show();
+                    Log.d("TAG", "GetCurrentOrderLines - error code:" + responseBillsList.getResult());
                 }
 
             }
 
             @Override
             public void onFailure(Call<ResponseCurrentOrderLines> call, Throwable t) {
-                //TODO error download orderLines
+                pgH.dismiss();
+                Beeper.getInstance().startBeep(MainActivity.this, 2, 1, 1000,10);
+                Toast.makeText(MainActivity.this, "Error from service order lines: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("TAG", "GetCurrentOrderLines - onFailure:" + t.getMessage());
             }
         });
     }
 
-    private void GetCurrentOrdersList(String address, int hours, boolean withLines, final boolean refresh){
+    private void getOrderMonitorList(String address, int hours, boolean withLines, final boolean refresh){
 
         CommandServices commandServices = ApiUtils.commandService(address);
         Call<ResponseOrderList> call = commandServices.getOrdersList(hours,withLines);
@@ -568,8 +811,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseOrderList> call, Response<ResponseOrderList> response) {
                 ResponseOrderList responseOrderList = response.body();
-
                 if(responseOrderList != null && responseOrderList.getResult() == 0){
+                    Log.d("TAG", "GetCurrentOrdersList - error code: " + responseOrderList.getResult());
                     if(responseOrderList.getOrdersList() != null ){
                         List<OrdersList> ordersLists = responseOrderList.getOrdersList();
                         List<Order> orderToShow = new ArrayList<>();
@@ -588,28 +831,40 @@ public class MainActivity extends AppCompatActivity {
                         gridOrders.setAdapter(adapterOrders);
                         if(refresh){
                             if (period != 0) {
-                                startTimerTaskGetOrdersList(period);
+                                timerTaskOrderMonitorList(period);
                             }
+                            if(pgH != null || pgH.isShowing())
+                                pgH.dismiss();
                         }
-                        if(pgH != null && pgH.isShowing())
+                        if(pgH != null || pgH.isShowing())
                             pgH.dismiss();
-
+                    }
+                    else{
+                        Log.d("TAG", "GetCurrentOrdersList - getOrdersList: null");
+                        if(pgH != null || pgH.isShowing())
+                            pgH.dismiss();
                     }
                 }
                 else{
-                    //TODO error null or 0
+                    pgH.dismiss();
+                    Toast.makeText(MainActivity.this, "Error from service order list: " + responseOrderList.getResult(), Toast.LENGTH_SHORT).show();
+                    Log.d("TAG", "GetCurrentOrdersList - error code:"+ responseOrderList.getResult());
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseOrderList> call, Throwable t) {
                 //TODO failure
+                Beeper.getInstance().startBeep(MainActivity.this, 2, 1, 1000,10);
+                pgH.dismiss();
+                Toast.makeText(MainActivity.this, "Error from service order list: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("TAG", "GetCurrentOrdersList - onFailure:" + t.getMessage());
             }
         });
 
     }
 
-    private void startTimerTaskGetOrderLines(final int periodSchedule) {
+    private void timerTaskGetCookMonitorLines(final int periodSchedule) {
         timerGetOrderLines = new Timer();
         timerTaskGetOrderLines = new TimerTask() {
             @Override
@@ -617,8 +872,8 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        GetCurrentOrderLines(ip, port, terminalID,false);
-                        Log.d("timerTaskGetOrderLines", timerTaskGetOrderLines.toString());
+                        getCookMonitorLines(ip, port, terminalID,false);
+                        Log.d("TAG", "startTimerTaskGetOrderLines - GetCurrentOrderLines(ip, port, terminalID,false);");
                     }
                 });
             }
@@ -627,7 +882,7 @@ public class MainActivity extends AppCompatActivity {
         timerGetOrderLines.schedule(timerTaskGetOrderLines, periodSchedule, periodSchedule);
     }
 
-    private void startTimerTaskGetOrdersList(final int periodSchedule) {
+    private void timerTaskOrderMonitorList(final int periodSchedule) {
         timerGetOrdersList = new Timer();
         timerTaskGetOrdersList = new TimerTask() {
             @Override
@@ -635,8 +890,8 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        GetCurrentOrdersList(ip + ":" + port, 36,true,false);
-                        Log.d("TimeUpdate order list ", timerGetOrdersList.toString());
+                        getOrderMonitorList(ip + ":" + port, 36,true,false);
+                        Log.d("TAG", "startTimerTaskGetOrdersList - GetCurrentOrdersList(ip + : + port, 36,true,false)");
                     }
                 });
             }
@@ -650,7 +905,10 @@ public class MainActivity extends AppCompatActivity {
             timerGetOrderLines.cancel();
             timerGetOrderLines.purge();
             timerGetOrderLines = null;
-            Log.d("onPause", "timerGetOrderLines is cancel");
+            Log.d("TAG", "stopTimerOrderLines - cook monitor stopped");
+        }
+        else{
+            Log.d("TAG", "stopTimerOrderLines - is null");
         }
     }
 
@@ -659,18 +917,23 @@ public class MainActivity extends AppCompatActivity {
             timerGetOrdersList.cancel();
             timerGetOrdersList.purge();
             timerGetOrdersList = null;
-            Log.d("onPause", "timerGetOrdersList is cancel");
+            Log.d("TAG", "stopTimerOrdersList - order monitor stopped");
+        }
+        else{
+            Log.d("TAG", "stopTimerOrdersList - is null");
         }
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onPause() {
+        super.onPause();
         if(settingsPreference.getInt("WorkAs",BaseEnum.NONE_SELECTED_MODE) == BaseEnum.CookMonitor){
-            initUIElementsCookMonitor();
+            Log.d("TAG", "onPause: cook monitor");
+            stopTimerOrderLines();
         }
         else if(settingsPreference.getInt("WorkAs",BaseEnum.NONE_SELECTED_MODE) == BaseEnum.OrderMonitor){
-            initUIElementsOrderMonitor();
+            Log.d("TAG", "onPause: order monitor");
+            stopTimerOrdersList();
         }
     }
 
@@ -724,4 +987,5 @@ public class MainActivity extends AppCompatActivity {
             return 0;
 
     }
+
 }

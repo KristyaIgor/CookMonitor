@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "186405211593",
+    "firebase_url": "https://cookmonitor-12122.firebaseio.com",
+    "project_id": "cookmonitor-12122",
+    "storage_bucket": "cookmonitor-12122.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:186405211593:android:98f718217605857a422c18",
+        "android_client_info": {
+          "package_name": "edi.md.cookmonitor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "186405211593-f95dr4arbelitoea04ekg59e60c9g3bc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9NIOTTgs1m8rEJblqU0XgbS1Qm7GT6Pc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "186405211593-f95dr4arbelitoea04ekg59e60c9g3bc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
