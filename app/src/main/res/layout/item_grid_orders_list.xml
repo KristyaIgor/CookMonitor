@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="250dp"
     android:background="#C400BCD4"
-    android:elevation="5dp"
-    android:orientation="horizontal">
+    android:elevation="5dp">
 
     <TextView
         android:id="@+id/textView17"
@@ -37,19 +36,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/lines_order"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="TextView"
-        android:textColor="@color/background_fon"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@+id/tv_count_lines"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView21" />
-
-    <TextView
         android:id="@+id/textView20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -77,18 +63,20 @@
 
     <TextView
         android:id="@+id/textView22"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:text="Statutul:"
         android:textColor="@color/background_fon"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_state_bill"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tv_state_bill"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="in rind"
@@ -98,29 +86,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView22" />
-
-    <TextView
-        android:id="@+id/tv_count_lines"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:text="5"
-        android:textAlignment="textEnd"
-        android:textColor="@color/colorAccent"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@+id/tv_lines_state"
-        app:layout_constraintTop_toBottomOf="@+id/textView21" />
-
-    <TextView
-        android:id="@+id/tv_lines_state"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="pregatit"
-        android:textAlignment="textEnd"
-        android:textColor="@color/colorAccent"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
     <ImageView
         android:id="@+id/img_delivery_type"
@@ -136,4 +101,58 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/bag_icon" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:isScrollContainer="true"
+        app:layout_constraintBottom_toTopOf="@+id/textView22"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView21"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/tv_lines_state"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:textAlignment="textEnd"
+            android:textColor="@color/colorAccent"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_count_lines"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_count_lines"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:textAlignment="textEnd"
+            android:textColor="@color/colorAccent"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_lines_state"
+            app:layout_constraintStart_toEndOf="@+id/lines_order"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lines_order"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:textColor="@color/background_fon"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_count_lines"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

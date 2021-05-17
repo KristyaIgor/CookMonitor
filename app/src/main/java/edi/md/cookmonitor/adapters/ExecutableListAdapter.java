@@ -1,5 +1,10 @@
 package edi.md.cookmonitor.adapters;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.media.MediaPlayer;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Random;
 
 import edi.md.cookmonitor.NetworkUtils.ServiceResultAndBody.OrdersLinesList;
 import edi.md.cookmonitor.R;
@@ -47,7 +53,7 @@ public class ExecutableListAdapter extends ArrayAdapter<OrdersLinesList> {
             TextView number = (TextView) v.findViewById(R.id.txt_no_order_fin);
             TextView count = (TextView) v.findViewById(R.id.txt_count_fin);
             TextView comment = (TextView) v.findViewById(R.id.txt_comment_executable_line);
-            TextView TextTime = (TextView) v.findViewById(R.id.txt_time);
+            TextView textTime = (TextView) v.findViewById(R.id.textViewTimeBackground);
 
             if (name != null) {
                 name.setText(item.getAssortimentName());
@@ -57,47 +63,127 @@ public class ExecutableListAdapter extends ArrayAdapter<OrdersLinesList> {
                 int mPreparationRate = item.getPreparationRate();
                 int mMinutesLeft = item.getMinutesLeft();
 
-                if (mPreparationRate - mMinutesLeft < 0) {
-                    time_remain = Math.abs(mPreparationRate - mMinutesLeft);
-                } else {
-                    time_remain = mPreparationRate - mMinutesLeft;
-                }
-                if (time_remain < 60 && mPreparationRate - mMinutesLeft > 0) {
-                    prepRate.setText(time_remain + " минут");
-                } else if (time_remain < 60 && mPreparationRate - mMinutesLeft < 0) {
-                    prepRate.setText("-" + time_remain + " минут");
-                } else if (time_remain > 60 && time_remain < 120) {
-                    prepRate.setText("-1 час и " + (time_remain - 60) + " мин.");
-                } else if (time_remain > 120 && time_remain < 180) {
-                    prepRate.setText("-2 часа и " + (time_remain - 120) + " мин.");
-                }
-                else if(time_remain > 180 && time_remain < 240){
-                    prepRate.setText("-3 часа и " + (time_remain - 240) + " мин.");
-                }
-                else if(time_remain > 240 && time_remain < 300){
-                    prepRate.setText("-4 часа и " + (time_remain - 300) + " мин.");
-                }
-                else if(mPreparationRate - mMinutesLeft == 0){
-                    prepRate.setText("0 минут");
+                if(mPreparationRate == 0){
+                    prepRate.setText("--");
+
+                    Drawable background = textTime.getBackground();
+
+                    if (background instanceof ShapeDrawable) {
+                        int color = Color.rgb(255, 255, 255);
+                        ((ShapeDrawable)background).getPaint().setColor(color);
+                        textTime.setBackground(background);
+                    }
+                    else if (background instanceof GradientDrawable) {
+                        int color = Color.rgb(255, 255, 255);
+                        ((GradientDrawable)background).setColor(color);
+                        textTime.setBackground(background);
+                    }
+                    else if (background instanceof ColorDrawable) {
+                        int color = Color.rgb(255, 255, 255);
+                        ((ColorDrawable)background).setColor(color);
+                        textTime.setBackground(background);
+                    }
                 }
                 else{
-                    prepRate.setText(time_remain + " мин.");
+                    if (mPreparationRate - mMinutesLeft < 0) {
+                        time_remain = Math.abs(mPreparationRate - mMinutesLeft);
+                    }
+                    else {
+                        time_remain = mPreparationRate - mMinutesLeft;
+                    }
+                    if (time_remain < 60 && mPreparationRate - mMinutesLeft > 0) {
+                        prepRate.setText(time_remain + "m");
+                    } else if (time_remain < 60 && mPreparationRate - mMinutesLeft < 0) {
+                        prepRate.setText("-" + time_remain + "m");
+                    } else if (time_remain > 60 && time_remain < 120) {
+                        prepRate.setText("-1h " + (time_remain - 60) + "m");
+                    } else if (time_remain > 120 && time_remain < 180) {
+                        prepRate.setText("-2h " + (time_remain - 120) + "m");
+                    }
+                    else if(time_remain > 180 && time_remain < 240){
+                        prepRate.setText("-3h " + (time_remain - 240) + "m");
+                    }
+                    else if(time_remain > 240 && time_remain < 300){
+                        prepRate.setText("-4h " + (time_remain - 300) + "m");
+                    }
+                    else {
+                        prepRate.setText(time_remain + "m");
+                    }
+
+
+                    if(mPreparationRate - mMinutesLeft >= 0 && mPreparationRate - mMinutesLeft <= 3){
+
+                        Drawable background = textTime.getBackground();
+
+                        if (background instanceof ShapeDrawable) {
+                            int color = Color.rgb(255, 187, 51);
+                            ((ShapeDrawable)background).getPaint().setColor(color);
+                            textTime.setBackground(background);
+                        }
+                        else if (background instanceof GradientDrawable) {
+                            int color = Color.rgb(255, 187, 51);
+                            ((GradientDrawable)background).setColor(color);
+                            textTime.setBackground(background);
+                        }
+                        else if (background instanceof ColorDrawable) {
+                            int color = Color.rgb(255, 187, 51);
+                            ((ColorDrawable)background).setColor(color);
+                            textTime.setBackground(background);
+                        }
+                    }
+                    else if(mPreparationRate - mMinutesLeft < 0){
+                        Drawable background = textTime.getBackground();
+
+                        if (background instanceof ShapeDrawable) {
+                            int color = Color.rgb(254, 79, 77);
+                            ((ShapeDrawable)background).getPaint().setColor(color);
+                            textTime.setBackground(background);
+                        }
+                        else if (background instanceof GradientDrawable) {
+                            int color = Color.rgb(254, 79, 77);
+                            ((GradientDrawable)background).setColor(color);
+                            textTime.setBackground(background);
+                        }
+                        else if (background instanceof ColorDrawable) {
+                            int color = Color.rgb(254, 79, 77);
+                            ((ColorDrawable)background).setColor(color);
+                            textTime.setBackground(background);
+                        }
+                    }
+                    else{
+                        Drawable background = textTime.getBackground();
+
+                        if (background instanceof ShapeDrawable) {
+                            int color = Color.rgb(255, 255, 255);
+                            ((ShapeDrawable)background).getPaint().setColor(color);
+                            textTime.setBackground(background);
+                        }
+                        else if (background instanceof GradientDrawable) {
+                            int color = Color.rgb(255, 255, 255);
+                            ((GradientDrawable)background).setColor(color);
+                            textTime.setBackground(background);
+                        }
+                        else if (background instanceof ColorDrawable) {
+                            int color = Color.rgb(255, 255, 255);
+                            ((ColorDrawable)background).setColor(color);
+                            textTime.setBackground(background);
+                        }
+                    }
                 }
-                if(mPreparationRate - mMinutesLeft < 0){
-//                    ring.start();
-                    TextTime.setBackgroundColor(mContext.getResources().getColor(R.color.aftertimeColor));
-                    prepRate.setBackgroundColor(mContext.getResources().getColor(R.color.aftertimeColor));
-                }
+
             }
             if (number != null) {
                 number.setText(String.valueOf(item.getNumber()));
             }
             if (count != null) {
-                count.setText(String.format("%.2f", item.getCount()));
+                count.setText(String.format("%.2f", item.getCount()).replace(",","."));
             }
-            if (comment != null) {
+            if (item.getComment() != null && !item.getComment().equals("")) {
+                comment.setVisibility(View.VISIBLE);
                 comment.setText(item.getComment());
             }
+            else
+                comment.setVisibility(View.GONE);
         }
 
         return v;

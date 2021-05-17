@@ -111,7 +111,9 @@ public class OrdersListGridAdapter extends ArrayAdapter<Order> {
             if(item.isDone())
                 viewHolder.parent.setBackgroundColor(context.getResources().getColor(R.color.executeColor));
 
-            int delivery = item.getDeliveryType();
+            int delivery = 0;
+            if(item.getDeliveryType() != null)
+                delivery = item.getDeliveryType();
 
             switch (delivery){
                 case 0: {
@@ -130,7 +132,7 @@ public class OrdersListGridAdapter extends ArrayAdapter<Order> {
 
             viewHolder.state.setText(orderState);
 
-            if(item.getLines() != null || item.getLines().size() > 0){
+            if(item.getLines() != null && item.getLines().size() > 0){
                 String linesName = "";
                 String linesCount = "";
                 String linesState = "";

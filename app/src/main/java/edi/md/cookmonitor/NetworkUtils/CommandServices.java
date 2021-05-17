@@ -33,4 +33,7 @@ public interface CommandServices {
 
     @GET("/OrderMonitor/json/MarkOrderAsFinished")
     Call<SimpleResultService> markOrderAsFinished (@Query("orderUid") String orderUid);
+
+    @GET("/OrderMonitor/json/MarkOrderAsPrepared")
+    Call<SimpleResultService> markOrderAsPrepared (@Query("orderUid") String orderUid);
 }
