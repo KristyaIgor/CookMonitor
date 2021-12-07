@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/drawable/item_selector_language.xml" value="0.291015625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/drawable/round_flags_selector.xml" value="0.291015625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/activity_main.xml" value="0.27890625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/activity_main_no_access.xml" value="0.27890625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/activity_main_order.xml" value="0.27890625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/activity_settings.xml" value="0.27890625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/activity_started.xml" value="0.27890625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/content_settings.xml" value="0.27890625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/item_execut.xml" value="0.27890625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/item_grid_orders_list.xml" value="0.27890625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/item_orders_lines.xml" value="0.27890625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/msg_dishes_final.xml" value="0.27890625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/spiner_item.xml" value="0.27890625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/menu/menu_main.xml" value="0.156640625" />
+      </map>
+    </option>
+  </component>
   <component name="PDMPlugin">
     <option name="skipTestSources" value="false" />
   </component>

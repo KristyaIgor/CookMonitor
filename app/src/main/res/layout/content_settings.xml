@@ -208,8 +208,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="5dp"
-        android:text="Dispozitiv ID: "
+        android:text="@string/txt_device_id"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/txt_device_id"
@@ -272,6 +271,53 @@
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+    <ImageButton
+        android:id="@+id/select_lng_ro"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/item_selector_language"
+        android:contentDescription="TODO"
+        android:padding="6dp"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toStartOf="@+id/select_lng_ru"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button"
+        app:srcCompat="@drawable/romania" />
+
+    <ImageButton
+        android:id="@+id/select_lng_ru"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/item_selector_language"
+        android:contentDescription="TODO"
+        android:padding="6dp"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toStartOf="@+id/select_lng_en"
+        app:layout_constraintStart_toEndOf="@+id/select_lng_ro"
+        app:layout_constraintTop_toBottomOf="@+id/button"
+        app:srcCompat="@drawable/russia" />
+
+    <ImageButton
+        android:id="@+id/select_lng_en"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/item_selector_language"
+        android:contentDescription="TODO"
+        android:padding="6dp"
+        android:scaleType="centerInside"
+        app:layout_constraintStart_toEndOf="@+id/select_lng_ru"
+        app:layout_constraintTop_toBottomOf="@+id/button"
+        app:srcCompat="@drawable/united_states" />
 
     <ToggleButton
         android:id="@+id/toggleButton"

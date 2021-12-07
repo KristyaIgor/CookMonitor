@@ -25,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -75,6 +76,9 @@ public class SettingsActivity extends AppCompatActivity  implements UpdateHelper
     Button updateApp;
     ToggleButton selectModeWork;
     RadioGroup radioGroup;
+    ImageButton ruLang;
+    ImageButton roLang;
+    ImageButton enLang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +107,9 @@ public class SettingsActivity extends AppCompatActivity  implements UpdateHelper
         rd_btnCookMonitor = findViewById(R.id.btn_cook_monitor);
         rd_btnOrderMonitor = findViewById(R.id.rd_order_monitor);
         textAppVersion = findViewById(R.id.textAppVersion);
+        ruLang = findViewById(R.id.select_lng_ru);
+        roLang = findViewById(R.id.select_lng_ro);
+        enLang = findViewById(R.id.select_lng_en);
 
         Settings = getSharedPreferences("Settings", MODE_PRIVATE);
         final SharedPreferences.Editor inputSeting =Settings.edit();
@@ -350,12 +357,35 @@ public class SettingsActivity extends AppCompatActivity  implements UpdateHelper
             }
         });
 
+        ruLang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        roLang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        enLang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
         updateApp.setOnClickListener(v -> {
             pgH.setMessage("loading...");
             pgH.setIndeterminate(true);
             pgH.show();
             UpdateHelper.with(SettingsActivity.this).onUpdateCheck(this).check();
         });
+
+
 
         textAppVersion.setText(getResources().getString(R.string.app_name) + " "  + getAppVersion(this));
     }

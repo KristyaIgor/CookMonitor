@@ -30,6 +30,9 @@ public class OrdersLinesList {
     @SerializedName("Uid")
     @Expose
     private String uid;
+    @SerializedName("DepartmentTypeName")
+    @Expose
+    private String DepartmentTypeName;
 
     public String getAssortimentName() {
         return assortimentName;
@@ -94,4 +97,9 @@ public class OrdersLinesList {
     public void setUid(String uid) {
         this.uid = uid;
     }
+
+    public String getDepartmentTypeName() {
+        return DepartmentTypeName;
+    }
+    public void setDepartmentTypeName(String departmentTypeName){this.DepartmentTypeName = departmentTypeName; }
 }

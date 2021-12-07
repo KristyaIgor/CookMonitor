@@ -12,6 +12,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,6 +53,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.Timer;
@@ -749,12 +751,14 @@ public class MainActivity extends AppCompatActivity {
                             for (OrdersLinesList ordersLinesList : ordersLinesLists) {
                                 int mPreparationRate = ordersLinesList.getPreparationRate();
                                 int mState = ordersLinesList.getState();
-
-                                if (mState == 2) {
-                                    listInQueue.add(ordersLinesList);
-                                }
-                                if (mState == 3) {
-                                    listExecutable.add(ordersLinesList);
+                                String departamentTypeName = ordersLinesList.getDepartmentTypeName();
+                                if (!departamentTypeName.toLowerCase().contains("bar")){
+                                    if (mState == 2) {
+                                        listInQueue.add(ordersLinesList);
+                                    }
+                                    if (mState == 3) {
+                                        listExecutable.add(ordersLinesList);
+                                    }
                                 }
                             }
                             sortListInQueue(listInQueue);

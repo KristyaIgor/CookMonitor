@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Монитор Помошник</string>
+    <string name="title_activity_settings">Настройки</string>
+    <string name="txt_device_id">ID устройство</string>
+</resources>
