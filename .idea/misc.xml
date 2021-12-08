@@ -13,8 +13,11 @@
         <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/content_settings.xml" value="0.27890625" />
         <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/item_execut.xml" value="0.27890625" />
         <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/item_grid_orders_list.xml" value="0.27890625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/item_in_queuqe.xml" value="0.18" />
         <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/item_orders_lines.xml" value="0.27890625" />
         <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/msg_dishes_final.xml" value="0.27890625" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/msg_go_to_cook.xml" value="0.2312192118226601" />
+        <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/msg_make_order_final.xml" value="0.2312192118226601" />
         <entry key="..\:/Android/CookMonitor/app/src/main/res/layout/spiner_item.xml" value="0.27890625" />
         <entry key="..\:/Android/CookMonitor/app/src/main/res/menu/menu_main.xml" value="0.156640625" />
       </map>

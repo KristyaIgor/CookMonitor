@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Codul intern:"
+        android:text="@string/txt_internal_code"
         android:textColor="@android:color/black"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Licenta:"
+        android:text="@string/txt_license"
         android:textColor="@android:color/black"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +52,7 @@
         android:background="@drawable/round_corners_transparent"
         android:ems="10"
         android:gravity="center"
-        android:hint="Codul"
+        android:hint="@string/palceholder_license"
         android:inputType="text"
         android:textAllCaps="true"
         android:textColor="@android:color/black"
@@ -69,7 +69,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/item_selector_button_blue"
-        android:text="Verifica licenta"
+        android:text="@string/btn_txt_verifyLicense"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
         android:textSize="24sp"
@@ -87,7 +87,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/item_selector_button_blue"
-        android:text="Verifica conexiune"
+        android:text="@string/btn_txt_verifyConnection"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
         android:textSize="24sp"
@@ -131,7 +131,7 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/round_corners_transparent"
         android:ems="10"
-        android:hint="Port"
+        android:hint="@string/palceholder_port"
         android:inputType="number"
         android:padding="5dp"
         android:textSize="22sp"
@@ -146,7 +146,7 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/round_corners_transparent"
         android:ems="10"
-        android:hint="Adresa IP"
+        android:hint="@string/palceholder_ip"
         android:inputType="text"
         android:padding="5dp"
         android:textSize="22sp"
@@ -172,7 +172,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Timpul de actualizare:"
+        android:text="@string/txt_refreshTime"
         android:textColor="@android:color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -232,7 +232,7 @@
             android:layout_height="wrap_content"
             android:layoutDirection="rtl"
             android:padding="5dp"
-            android:text="Bucatar"
+            android:text="@string/txt_radio_Cook"
             android:textSize="20sp" />
 
         <RadioButton
@@ -241,7 +241,7 @@
             android:layout_height="wrap_content"
             android:layoutDirection="rtl"
             android:padding="5dp"
-            android:text="Eliberare"
+            android:text="@string/txt_radio_release"
             android:textSize="20sp" />
     </RadioGroup>
 
@@ -252,72 +252,72 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Modul de lucru:"
+        android:text="@string/txt_way_of_working"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner_time_update" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/item_selector_button_blue"
-        android:text="Update"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+<!--    <Button-->
+<!--        android:id="@+id/button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:background="@drawable/item_selector_button_blue"-->
+<!--        android:text="Update"-->
+<!--        android:textColor="@android:color/white"-->
+<!--        android:textSize="18sp"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />-->
 
-    <ImageButton
-        android:id="@+id/select_lng_ro"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@drawable/item_selector_language"
-        android:contentDescription="TODO"
-        android:padding="6dp"
-        android:scaleType="centerInside"
-        app:layout_constraintEnd_toStartOf="@+id/select_lng_ru"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button"
-        app:srcCompat="@drawable/romania" />
+<!--    <ImageButton-->
+<!--        android:id="@+id/select_lng_ro"-->
+<!--        android:layout_width="48dp"-->
+<!--        android:layout_height="48dp"-->
+<!--        android:layout_marginStart="8dp"-->
+<!--        android:layout_marginLeft="8dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:layout_marginEnd="8dp"-->
+<!--        android:layout_marginRight="8dp"-->
+<!--        android:background="@drawable/item_selector_language"-->
+<!--        android:contentDescription="TODO"-->
+<!--        android:padding="6dp"-->
+<!--        android:scaleType="centerInside"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/select_lng_ru"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/button"-->
+<!--        app:srcCompat="@drawable/romania" />-->
 
-    <ImageButton
-        android:id="@+id/select_lng_ru"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/item_selector_language"
-        android:contentDescription="TODO"
-        android:padding="6dp"
-        android:scaleType="centerInside"
-        app:layout_constraintEnd_toStartOf="@+id/select_lng_en"
-        app:layout_constraintStart_toEndOf="@+id/select_lng_ro"
-        app:layout_constraintTop_toBottomOf="@+id/button"
-        app:srcCompat="@drawable/russia" />
+<!--    <ImageButton-->
+<!--        android:id="@+id/select_lng_ru"-->
+<!--        android:layout_width="48dp"-->
+<!--        android:layout_height="48dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:background="@drawable/item_selector_language"-->
+<!--        android:contentDescription="TODO"-->
+<!--        android:padding="6dp"-->
+<!--        android:scaleType="centerInside"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/select_lng_en"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/select_lng_ro"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/button"-->
+<!--        app:srcCompat="@drawable/russia" />-->
 
-    <ImageButton
-        android:id="@+id/select_lng_en"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/item_selector_language"
-        android:contentDescription="TODO"
-        android:padding="6dp"
-        android:scaleType="centerInside"
-        app:layout_constraintStart_toEndOf="@+id/select_lng_ru"
-        app:layout_constraintTop_toBottomOf="@+id/button"
-        app:srcCompat="@drawable/united_states" />
+<!--    <ImageButton-->
+<!--        android:id="@+id/select_lng_en"-->
+<!--        android:layout_width="48dp"-->
+<!--        android:layout_height="48dp"-->
+<!--        android:layout_marginStart="8dp"-->
+<!--        android:layout_marginLeft="8dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:background="@drawable/item_selector_language"-->
+<!--        android:contentDescription="TODO"-->
+<!--        android:padding="6dp"-->
+<!--        android:scaleType="centerInside"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/select_lng_ru"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/button"-->
+<!--        app:srcCompat="@drawable/united_states" />-->
 
     <ToggleButton
         android:id="@+id/toggleButton"
@@ -326,8 +326,8 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="ToggleButton"
-        android:textOff="Doar un mod de lucru"
-        android:textOn="Mod de lucru la alegere"
+        android:textOff="@string/txt_toggle_btn_JustaWayOfWorking"
+        android:textOn="@string/txt_toggle_btn_OptionalWayOfWorking"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 

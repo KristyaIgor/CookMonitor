@@ -1,7 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MonitorHelper</string>
-    <string name="title_activity_settings">Setari</string>
-    <string name="txt_device_id">ID-ul dispozitivului</string>
+    <string name="title_activity_settings">Setări</string>
+    <string name="txt_device_id">Dispozitiv</string>
+    <string name="txt_internal_code">Codul intern</string>
+    <string name="txt_license">Licența</string>
+    <string name="palceholder_license">Codul</string>
+    <string name="palceholder_ip">Adresă IP</string>
+    <string name="palceholder_port">Port</string>
+    <string name="btn_txt_verifyLicense">Verifică licența</string>
+    <string name="btn_txt_verifyConnection">Verifică conexiune</string>
+    <string name="txt_refreshTime">Timpul de actualizare</string>
+    <string name="txt_way_of_working">Modul de lucru</string>
+    <string name="txt_radio_Cook">Bucătar</string>
+    <string name="txt_radio_release">Eliberare</string>
+    <string name="txt_toggle_btn_JustaWayOfWorking">Doar un mod de lucru</string>
+    <string name="txt_toggle_btn_OptionalWayOfWorking">Mod de lucru la alegere</string>
+    <string name="btn_update">Actualizează</string>
+    <string name="txt_NoAccess">Nu aveți acces! Apelați distribuitorul!</string>
+    <string name="btn_exit">Ieșire</string>
+    <string name="txt_welcome">Bun venit!</string>
+    <string name="txt_choose_way_of_work">Pentru a continua alege modul de lucru a aplicație</string>
+    <string name="mode_Cook">Modul bucătarului</string>
+    <string name="mode_Release">Modul de eliberare</string>
+    <string name="current_mode">Curent: modul bucătarului</string>
+    <string name="go_to_mode_release">Treceți la modul de eliberare</string>
+    <string name="queue_to_prepare">În coada de pregătit</string>
+    <string name="In_progress_preparing">În curs de pregătire</string>
+    <string name="txt_Order">Comanda</string>
+    <string name="txt_Time">Timp</string>
+    <string name="txt_Name">Nume</string>
+    <string name="txt_account">Contul</string>
+    <string name="txt_date">Data</string>
+    <string name="txt_status">Statutul</string>
+    <string name="txt_inRow">în rând</string>
+    <string name="txt_confirmPrepareFor">Confirmați pregătirea pentru</string>
+    <string name="btn_YES">DA</string>
+    <string name="btn_CANCEL">RENUNȚ</string>
+    <string name="txt_StartCooking">Începeți să gătiți</string>
+    <string name="btn_ReadyAndReleased">Pregătit și eliberat</string>
+    <string name="btn_readyForRelease">Gata pentru eliberare</string>
+    <string name="btn_released">Eliberat</string>
+    <string name="current_mode_Release">Curent: modul eliberare</string>
+    <string name="go_to_mode_cook">Treceți la modul bucatarului</string>
+    <string name="order_Not_set">Nesetat</string>
+    <string name="order_Indefinite">Nedeterminat</string>
+    <string name="order_Received">Primit</string>
+    <string name="order_Working">In lucru</string>
+    <string name="order_Executed">Executat</string>
+    <string name="order_Canceled">Anulat</string>
+    <string name="order_Prepared">Pregatit</string>
+    <string name="spinner_Secconds">Secunde</string>
+    <string name="spinner_Minutes">Minute</string>
+    <string name="spinner_Manual">Manual</string>
 
 </resources>
+

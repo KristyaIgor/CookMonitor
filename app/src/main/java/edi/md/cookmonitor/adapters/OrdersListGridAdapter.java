@@ -85,26 +85,26 @@ public class OrdersListGridAdapter extends ArrayAdapter<Order> {
             String orderState = "";
             switch (states){
                 case 0: {
-                    orderState = "Nesetat";
+                    orderState = context.getString(R.string.order_Not_set);
                 }break;
                 case 1: {
-                    orderState = "Nedeterminat";
+                    orderState = context.getString(R.string.order_Indefinite);
                 }break;
                 case 2: {
-                    orderState = "Primit";
+                    orderState = context.getString(R.string.order_Received);
                     viewHolder.parent.setBackgroundColor(context.getResources().getColor(R.color.color_new_order));
                 }break;
                 case 3: {
-                    orderState = "In lucru";
+                    orderState = context.getString(R.string.order_Working);
                 }break;
                 case 4:{
-                    orderState = "Executat";
+                    orderState = context.getString(R.string.order_Executed);
                 }break;
                 case 5: {
-                    orderState = "Anulat";
+                    orderState = context.getString(R.string.order_Canceled);
                 }break;
                 case 6: {
-                    orderState = "Pregatit";
+                    orderState = context.getString(R.string.order_Prepared);
                 }break;
             }
 
@@ -143,31 +143,31 @@ public class OrdersListGridAdapter extends ArrayAdapter<Order> {
                     int stateLine = lineOrdersList.getState();
                     switch (stateLine) {
                         case 0: {
-                            linesState = linesState + "\n" + "Nesetat";
+                            linesState = linesState + "\n" + context.getString(R.string.order_Not_set);
                         }
                         break;
                         case 1: {
-                            linesState = linesState + "\n" + "Nedeterminat";
+                            linesState = linesState + "\n" + context.getString(R.string.order_Indefinite);
                         }
                         break;
                         case 2: {
-                            linesState = linesState + "\n" + "Primit";
+                            linesState = linesState + "\n" + context.getString(R.string.order_Received);
                         }
                         break;
                         case 3: {
-                            linesState = linesState + "\n" + "In lucru";
+                            linesState = linesState + "\n" + context.getString(R.string.order_Working);
                         }
                         break;
                         case 4: {
-                            linesState = linesState + "\n" + "Executat";
+                            linesState = linesState + "\n" + context.getString(R.string.order_Executed);
                         }
                         break;
                         case 5: {
-                            linesState = linesState + "\n" + "Anulat";
+                            linesState = linesState + "\n" + context.getString(R.string.order_Canceled);
                         }
                         break;
                         case 6: {
-                            linesState = linesState + "\n" + "Pregatit";
+                            linesState = linesState + "\n" + context.getString(R.string.order_Prepared);
                         }
                     }
 
