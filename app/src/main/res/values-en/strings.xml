@@ -53,5 +53,7 @@
     <string name="spinner_Secconds">Seconds</string>
     <string name="spinner_Minutes">Minutes</string>
     <string name="spinner_Manual">Manual</string>
+    <string name="validaiton">Validation</string>
+    <string name="errorCod">Error!Code:</string>
 
 </resources>

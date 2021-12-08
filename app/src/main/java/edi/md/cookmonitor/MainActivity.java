@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         pgH = new ProgressDialog(this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme);
 
 
-        pgH.setMessage("Validare...");
+        pgH.setMessage(getResources().getString(R.string.validaiton) + "...");
         pgH.setCancelable(false);
         pgH.setIndeterminate(true);
         pgH.show();
@@ -178,12 +178,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 else{
-                    Toast.makeText(MainActivity.this, "Nu aveti acces! Apelati la distribuitor!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.txt_NoAccess), Toast.LENGTH_SHORT).show();
                     initUIElementsNoAccess();
                 }
             }
             else{
-                Toast.makeText(MainActivity.this, "Nu aveti acces! Apelati la distribuitor!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.txt_NoAccess), Toast.LENGTH_SHORT).show();
                 initUIElementsNoAccess();
             }
         }
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                     initUIElementsOrderMonitor();
                 }
             } else {
-                Toast.makeText(MainActivity.this, "Nu aveti acces! Apelati la distribuitor!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.txt_NoAccess), Toast.LENGTH_SHORT).show();
                 initUIElementsNoAccess();
             }
         }
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                     initUIElementsOrderMonitor();
                 }
             } else {
-                Toast.makeText(MainActivity.this, "Nu aveti acces! Apelati la distribuitor!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.txt_NoAccess), Toast.LENGTH_SHORT).show();
                 initUIElementsNoAccess();
             }
         }
@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
                                         getCookMonitorLines(ip, port, terminalID,false);
                                         inQueue.dismiss();
                                     } else {
-                                        Toast.makeText(MainActivity.this, "Erroare!Codul:" + result, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(MainActivity.this, getResources().getString(R.string.errorCod) + result, Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }

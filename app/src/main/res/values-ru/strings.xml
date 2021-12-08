@@ -53,5 +53,7 @@
     <string name="spinner_Secconds">Секунд</string>
     <string name="spinner_Minutes">Минут</string>
     <string name="spinner_Manual">В ручную</string>
+    <string name="validaiton">Валидация</string>
+    <string name="errorCod">Ошибка!Код:</string>
 
 </resources>
