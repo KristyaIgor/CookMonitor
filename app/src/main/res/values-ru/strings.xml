@@ -39,8 +39,8 @@
     <string name="btn_CANCEL">ОТМЕНА</string>
     <string name="txt_StartCooking">Начать приготовление</string>
     <string name="btn_ReadyAndReleased">Приготовлено и выпущено</string>
-    <string name="btn_readyForRelease">Gata pentru eliberare</string>
-    <string name="btn_released">Eliberat</string>
+    <string name="btn_readyForRelease">Готов к выдаче</string>
+    <string name="btn_released">Выдан</string>
     <string name="current_mode_Release">Текущий режим: Режим выдачи</string>
     <string name="go_to_mode_cook">Перейти в режим повара</string>
     <string name="order_Not_set">Не задан</string>
@@ -55,5 +55,4 @@
     <string name="spinner_Manual">В ручную</string>
     <string name="validaiton">Валидация</string>
     <string name="errorCod">Ошибка!Код:</string>
-
 </resources>
